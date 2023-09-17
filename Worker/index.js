@@ -1,7 +1,10 @@
 const Queue = require("bull");
+const transporter = require('./mail');
 console.log("started the worker");
 // Create a Bull queue instance
 const jobQueue = new Queue("multiply", "redis://127.0.0.1:6379");
+
+
 
 // Define the worker function that will process jobs
 const workerFunction = async (job) => {
@@ -14,7 +17,7 @@ const workerFunction = async (job) => {
     // Your job processing logic goes here
     console.log(`Processing job with data: ${JSON.stringify(data)}`);
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Mark the job as completed
     return { status: "completed", time: Date.now() - start };
@@ -26,11 +29,23 @@ const workerFunction = async (job) => {
 };
 
 // Create a Bull worker and specify the worker function
-jobQueue.process(11, workerFunction);
+jobQueue.process(1, workerFunction);
 
 // Listen for completed and failed job events
 jobQueue.on("completed", (job, result) => {
-  console.log(`Job ${job.id} completed with ${result.time}`);
+  const mailOptions = {
+    from: 'aggarwalchirag4904@gmail.com',
+    to: 'zanemartini030@gmail.com',
+    subject: 'yo yo yo ',
+    text: `Job ${job.id} completed with ${result.time}`
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
 });
 
 jobQueue.on("failed", (job, err) => {
