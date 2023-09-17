@@ -32,22 +32,28 @@ const workerFunction = async (job) => {
 jobQueue.process(1, workerFunction);
 
 // Listen for completed and failed job events
-jobQueue.on("completed", (job, result) => {
-  const mailOptions = {
-    from: 'aggarwalchirag4904@gmail.com',
-    to: 'zanemartini030@gmail.com',
-    subject: 'yo yo yo ',
-    text: `Job ${job.id} completed with ${result.time}`
-  };
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-    } else {
-      console.log('Email sent:', info.response);
-    }
-  });
+jobQueue.on("completed", async (job, result) => {
+
+  try {
+    const mailOptions = {
+      from: 'aggarwalchirag4904@gmail.com',
+      to: 'zanemartini030@gmail.com',
+      subject: 'yo yo yo ',
+      text: `Job ${job.id} completed with ${result.time}`
+    };
+
+     await transporter.sendMail(mailOptions);
+
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
 });
+
+
 
 jobQueue.on("failed", (job, err) => {
   console.error(`Job ${job.id} failed with error: ${err.message}`);
 });
+
+
