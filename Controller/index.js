@@ -11,7 +11,3 @@ for (let index = 0; index < a.length; index++) {
   const element = a[index];
   jobQueue.add({ number: element });
 }
-
-// jobQueue.on("completed", (job, result) => {
-//   console.log("job complete", result);
-// });
