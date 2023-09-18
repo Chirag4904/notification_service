@@ -1,4 +1,6 @@
 const Queue = require("bull");
+const { sendSms } = require("./sendSms");
+const { sendMail } = require("./sendMail");
 console.log("started the worker");
 // Create a Bull queue instance
 const jobQueue = new Queue("multiply", "redis://127.0.0.1:6379");
@@ -13,8 +15,14 @@ const workerFunction = async (job) => {
 
     // Your job processing logic goes here
     console.log(`Processing job with data: ${JSON.stringify(data)}`);
+    sendMail(
+      "chiragaggarwal69@gmail.com",
+      "subject",
+      `testing the worker ${number}`
+    );
+    // sendSms(`number ${number}`);
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Mark the job as completed
     return { status: "completed", time: Date.now() - start };
