@@ -1,7 +1,7 @@
 const Queue = require("bull");
 const transporter = require('./mail');
+
 console.log("started the worker");
-// Create a Bull queue instance
 const jobQueue = new Queue("multiply", "redis://127.0.0.1:6379");
 
 
